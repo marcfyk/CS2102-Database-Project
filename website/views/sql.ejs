@@ -1,0 +1,35 @@
+<%- contentFor('pageTitle') %>
+This is the title.
+
+
+<%- contentFor('scripts') %>
+<script>
+</script>
+
+
+<%- contentFor('main') %>
+<p>This is an example of an sql query</p>
+<h1>Wowwww</h1>
+<table class="table">
+
+  <!-- TABLE HEAD -->
+  <thead>
+    <tr>
+      <th scope="col">Matric</th>
+      <th scope="col">Name</th>
+      <th scope="col">Faculty</th>
+    </tr>
+  </thead>
+
+  <!-- TABLE BODY -->
+  <tbody>
+    <% for (let i = 0; i < data.length; i++) {%>
+    <tr>
+      <td><%= data[i].matric %></td>
+      <td><%= data[i].name %></td>
+      <td><%= data[i].faculty  %></td>
+    </tr>
+    <% } %>
+  </tbody>
+
+</table>

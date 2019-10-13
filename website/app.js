@@ -1,18 +1,22 @@
-// ==== init =============================================================
 var createError = require('http-errors');
 var express = require('express');
+var expressLayouts = require('express-ejs-layouts');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-// USE THIS TO ADD ROUTERS
+require('dotenv').config();
+
+// ==== routers ===========================================================
+// = add routers here
+// ========================================================================
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var homeRouter = require('./routes/home');
+var sqlRouter = require('./routes/sql')
 
 var app = express();
 
-// ==== view engine setup plus routes ====================================
+// ==== view engine setup =================================================
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -20,25 +24,25 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/public')));
+app.use(expressLayouts);
 
-// USE THIS TO ADD ROUTES
+// ==== routes -===========================================================
+// = add routes here after adding the routers above ^^^
+// ========================================================================
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('home', homeRouter);
+app.use('/sql', sqlRouter);
 
-// ==== catch 404 and forward to error handler============================
+// ==== error handling ====================================================
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
-// ==== error handler ====================================================
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
+  res.locals.pageTitle = "asdf";
+  res.locals.scripts = "<script></script>";
   res.status(err.status || 500);
   res.render('error');
 });
