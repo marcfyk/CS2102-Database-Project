@@ -1,5 +1,21 @@
 # CS2102-Database-Project
 
+### Setting up .env
+In website root folders (`/website/`) create a file called `.env`. Inside it
+insert this line:
+
+* Format:
+
+  `DATABASE_URL=postgres://[USERNAME]:[PASSWORD]@[HOST_ADDRESS]:[PORT]/[DATABASE_NAME]`
+ 
+* Example:
+
+  `DATABASE_URL=postgres://postgres:********@localhost:5432/postgres`
+
+This connects to `postgres` on your local machine `localhost` on port `5432`,
+inside the database (not table) `postgres`, with username `postgres` and
+password `*********`.
+
 ### Deadlines
 Deliverables by **9 November 2019**
 
@@ -15,7 +31,6 @@ deadline and it is funded if it meets or exceeds the funding
 requirement by the deadline period. Funder may cancel their funding
 before the deadline but not after. Creator may also fund other creators’
 projects. Each user must have an account.`
-
 
 ### Entities, Relationships and Attributes
 
