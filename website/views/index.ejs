@@ -1,4 +1,12 @@
 <%- contentFor('main') %>
+
+<% if (locals.justLoggedIn) { %>
+  <div class="alert alert-success" role="alert">
+    Successfully logged in
+  </div> 
+<% } %>
+
+
 <h1>CS2102 Group 41 Project</h1>
 
 <p>Run <code>psql</code> on computer.</p>
@@ -50,9 +58,6 @@ VALUES ('A0000010J', 'Alyssa Sims', 'SCI');
 <p>Click the link below and see if it renders. hopefully it does.</p>
 
 <a href="/sql">link to sql</a>
-
-<%- contentFor('pageTitle') %>
-This is the title.
 
 <%- contentFor('scripts') %>
 <script>
