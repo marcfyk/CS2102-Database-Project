@@ -1,4 +1,4 @@
-const util = require('../util/aux');
+const util = require('../util/fn_utils');
 const express = require('express');
 const router = express.Router();
 const pool = util.getPool();
