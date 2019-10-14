@@ -1,11 +1,9 @@
-var express = require('express');
-var router = express.Router();
+const util = require('../util/fn_utils')
+const express = require('express');
+const router = express.Router();
 
-router.get('/', function(req, res, next) {
-  res.render('index', {
-    pageTitle: "Home",
-    description: "desc-placeholder-index.js"
-  });
+router.get('/', (req, res, next) => {
+  util.render(res, 'index', 'Home');
 });
 
 module.exports = router;

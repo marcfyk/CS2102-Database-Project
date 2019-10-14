@@ -1,11 +1,11 @@
 <%- contentFor('main') %>
 <div class="center">
 
-  <% if (typeof isEmpty !== "undefined") { %>
+  <% if (typeof message !== "undefined") { %>
     <%-
     include('partials/alert', {
       alertType: 'danger',
-      alertMessage: 'Please fill in all fields.'
+      alertMessage: message
     })
     -%>
   <% } %>
@@ -39,7 +39,6 @@
     -%>
 
   </form>
-
 </div>
 
 <%- contentFor('scripts') %>

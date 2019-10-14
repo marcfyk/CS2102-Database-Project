@@ -3,16 +3,18 @@ const express = require('express');
 const router = express.Router();
 const pool = util.getPool();
 
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   util.render(res, 'login', 'Login');
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', (req, res, next) => {
   const user = req.body.username;
   const pass = req.body.password;
 
   if (!user || !pass) {
-    util.render(res, 'login', 'Login', { isEmpty: true });
+    util.render(res, 'login', 'Login', {
+      message: 'Please fill in all fields.'
+    });
     return;
   }
 
@@ -20,7 +22,9 @@ router.post('/', function(req, res, next) {
       WHERE username='${user}' AND password='${pass}'`;
   pool.query(query, (err, data) => {
     if (err) {
-      res.redirect('/login');
+      util.render(res, 'login', 'Login', {
+        message: 'SQL error occured.' // TODO proper error message
+      });
     } else {
       res.redirect('/');
     }

@@ -1,58 +1,56 @@
 <%- contentFor('main') %>
 <div class="center">
 
-  <% if (locals.isEmpty) { %>
-    <%- include('partials/alert', {alertType: 'danger', alertMessage: 'Some fields were left blank.'}) %>
-  <% } %>
-
-  <% if (locals.usernameExists) { %>
-    <%- include('partials/alert', {alertType: 'danger', alertMessage: 'Sorry! That username already exists!'}) %>
+  <% if (typeof message !== 'undefined') { %>
+    <%-
+    include('partials/alert', {
+      alertType: 'danger',
+      alertMessage: message
+    })
+    %>
   <% } %>
 
   <form action="signup" method="post" role="form" id="signup_form">
 
-    <div class="form-group">
-      <label for="email">
-        Email
-      </label>
-      <input type="text"
-             class="form-control"
-             id="email"
-             name="email"
-             aria-describedby="emailHelp"
-             placeholder="Enter email">
-    </div>
+    <%-
+    include('partials/form-group', {
+      inputName: 'email',
+      inputLabel: 'Email',
+      inputType: 'text',
+      placeHolder: 'Enter Email',
+      inputHelpText: 'Ensure your email has <code>@domain.com</code>'
+    });
+    -%>
 
-    <div class="form-group">
-      <label for="username">
-        Username
-      </label>
-      <input type="text"
-             class="form-control"
-             id="username"
-             name="username"
-             aria-describedby="usernameHelp"
-             placeholder="Enter username">
-    </div>
+    <%-
+    include('partials/form-group', {
+      inputName: 'username',
+      inputLabel: 'Username',
+      inputType: 'text',
+      placeHolder: 'Enter Username',
+      inputHelpText: 'Your username cannot contain any spaces'
+    });
+    -%>
 
-    <div class="form-group">
-      <label for="password">
-        Password
-      </label>
-      <input type="password"
-             class="form-control"
-             id="password"
-             name="password"
-             placeholder="Enter Password">
-      <small id="passwordHelp"class="form-text text-muted">
-        Your password should be at least 8 (eight) characters long.
-      </small>
-    </div>
+    <%-
+    include('partials/form-group', {
+      inputName: 'password',
+      inputLabel: 'Password',
+      inputType: 'password',
+      placeHolder: 'Enter Password',
+      inputHelpText: 'Your password must be at least eight characters long'
+    });
+    -%>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <%-
+    include('partials/button', {
+      type: 'submit',
+      className: 'btn btn-primary',
+      label: 'Submit'
+    });
+    -%>
 
   </form>
-
 </div>
 
 <%- contentFor('scripts') %>
