@@ -1,42 +1,42 @@
 <%- contentFor('main') %>
 <div class="center">
 
-  <% if (locals.isEmpty) { %>
-    <div class="center center-text">
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        Some fields were left blank!
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    </div>
+  <% if (typeof isEmpty !== "undefined") { %>
+    <%-
+    include('partials/alert', {
+      alertType: 'danger',
+      alertMessage: 'Please fill in all fields.'
+    })
+    -%>
   <% } %>
 
   <form action="login" method="post" role="form" id="login_form">
 
-    <div class="form-group">
-      <label for="username">
-        Username
-      </label>
-      <input type="text"
-             class="form-control"
-             id="username"
-             name="username"
-             aria-describedby="usernameHelp" placeholder="Enter username">
-    </div>
+    <%-
+    include('partials/form-group', {
+      inputName: 'username',
+      inputLabel: 'Username',
+      inputType: 'text',
+      placeHolder: 'Enter Username'
+    });
+    -%>
 
-    <div class="form-group">
-      <label for="password">
-        Password
-      </label>
-      <input type="password"
-             class="form-control"
-             id="password"
-             name="password"
-             placeholder="Enter Password">
-    </div>
+    <%-
+    include('partials/form-group', {
+      inputName: 'password',
+      inputLabel: 'Password',
+      inputType: 'password',
+      placeHolder: 'Enter Password'
+    });
+    -%>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <%-
+    include('partials/button', {
+      type: 'submit',
+      className: 'btn btn-primary',
+      label: 'Submit'
+    });
+    -%>
 
   </form>
 
