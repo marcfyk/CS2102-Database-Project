@@ -2,21 +2,15 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title><%- pageTitle %></title>
+    <title>StratOak: <%- pageTitle %></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- bootstrap 4.3.1 cdn -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-      crossorigin="anonymous">
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
-      integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
-      crossorigin="anonymous">
-    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     
     <!-- jquery -->
     <script
@@ -28,11 +22,38 @@
     <!-- custom javascript -->
     <script type="text/css" src="javascripts/scripts.js"></script>
 
-    <!-- custom css -->
+    <!-- custom css for website -->
     <link rel="stylesheet" href="stylesheets/style.css">
+
+    <!-- custom css for navbar -->
+    <link rel="stylesheet" href="stylesheets/nav.css">
   </head>
 
   <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <!-- brand link -->
+      <a class="navbar-brand" href="/">Stratton Oakmont</a>
+
+      <!-- navbar links -->
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active"><a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a></li>
+        <li class="nav-item active"><a class="nav-link" href="/">Projects</a></li>
+        <li class="nav-item active"><a class="nav-link" href="/login">Log In</a></li>
+        <li class="nav-item active"><a class="nav-link" href="/signup">Sign Up</a></li>
+      </ul>
+
+      <span class="navbar-text">
+        CS2102 AY1920/S1 Group 41: Crowdfunding
+      </span>
+
+      <!-- search bar -->
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+
+    </nav>
+
     <div class="main">
       <%- defineContent('main') %>
     </div>
@@ -41,4 +62,3 @@
   <%- scripts %>
 
 </html>
-

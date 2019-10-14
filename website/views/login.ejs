@@ -1,0 +1,47 @@
+<%- contentFor('main') %>
+<div class="center">
+
+  <% if (locals.isEmpty) { %>
+    <div class="center center-text">
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Some fields were left blank!
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  <% } %>
+
+  <form action="login" method="post" role="form" id="login_form">
+
+    <div class="form-group">
+      <label for="username">
+        Username
+      </label>
+      <input type="text"
+             class="form-control"
+             id="username"
+             name="username"
+             aria-describedby="usernameHelp" placeholder="Enter username">
+    </div>
+
+    <div class="form-group">
+      <label for="password">
+        Password
+      </label>
+      <input type="password"
+             class="form-control"
+             id="password"
+             name="password"
+             placeholder="Enter Password">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+  </form>
+
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+</script>
