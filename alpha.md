@@ -29,6 +29,8 @@
 - [Contains](#contains)
 - [Interested](#interested)
 - [Reviews](#reviews)
+- [Constraints](#constraints)
+- [Triggers](#triggers)
 
 #### <a name="account"></a> Account
 ```
@@ -66,10 +68,6 @@ CREATE TABLE HasAddress (
     PRIMARY KEY (username, country, location)
 );
 
-ALTER TABLE Address
-ADD CONSTRAINT C
-FOREIGN KEY (country, location) REFERENCES HasAddress (country, location) DEFERRABLE INITIALLY DEFERRED;
-
 ```
 #### <a name="creditcard"></a> CreditCard
 ```
@@ -85,9 +83,6 @@ CREATE TABLE HasCreditCard (
     Number      varchar(100) REFERENCES CreditCard(number) UNIQUE,
     PRIMARY KEY (username, number)
 );
-ALTER TABLE CreditCard 
-ADD CONSTRAINT C
-FOREIGN KEY (number) REFERENCES HasCreditCard (number) DEFERRABLE INITIALLY DEFERRED;
 
 ```
 #### <a name="project"></a> Project
@@ -133,11 +128,6 @@ CREATE TABLE Owns (
     projectID    varchar(100) REFERENCES Project(projectID),
     PRIMARY KEY (username, projectID)
 );
-
-ALTER TABLE Project
-ADD CONSTRAINT C
-FOREIGN KEY (projectID, name) REFERENCES Owns (projectID, username) DEFERRABLE INITIALLY DEFERRED;
-
 ```
 #### <a name="likes"></a> Likes
 ```
@@ -180,6 +170,20 @@ CREATE TABLE Reviews (
     CHECK (RATING BETWEEN 1 AND 5)
 );
 
+```
+#### <a name="contraints"></a> Constraints
+```
+ALTER TABLE Address
+ADD CONSTRAINT C
+FOREIGN KEY (country, location) REFERENCES HasAddress (country, location) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE CreditCard 
+ADD CONSTRAINT C
+FOREIGN KEY (number) REFERENCES HasCreditCard (number) DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE Project
+ADD CONSTRAINT C
+FOREIGN KEY (projectID, name) REFERENCES Owns (projectID, username) DEFERRABLE INITIALLY DEFERRED;
 ```
 
 #### <a name="triggers"></a> Triggers
