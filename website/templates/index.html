@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block main %}
+
+  {% if data is defined %}
+    <div class="alert alert-danger" role="alert">
+      {{ data.message }}
+    </div>
+  {% endif %}
+
+  <p>Hello!</p>
+{% endblock %}

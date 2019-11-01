@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+
+    <link rel="stylesheet" href="static/css/style-simple.css">
+</head>
+<body>
+    <form class="registrationForm">
+        {{ form.hidden_tag() }}
+
+        <div class="formField">
+        {{ form.username }}
+        {% if form.username.errors %}
+            <div class="errorMessage">
+            {% for error in form.username.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </div>
+        {% endif %}
+        </div>
+
+        <div class="formField">
+        {{ form.password }}
+        {% if form.password.errors %}
+            <div class="errorMessage">
+            {% for error in form.password.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </div>
+        {% endif %}
+        </div>
+
+        <div class="formField">
+        {{ form.preferred_name }}
+        {% if form.preferred_name.errors %}
+            <div class="errorMessage">
+            {% for error in form.preferred_name.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+            </div>
+        {% endif %}
+        </div>
+
+        <button id="registerButton" formmethod="post">register</button>
+    </form>
+    <p>Already registered? <a href="#">Login</a></p>
+</body>
+</html>
