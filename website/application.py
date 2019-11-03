@@ -1,6 +1,7 @@
 from os import path
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user, login_required, login_user
+from website.dotenv import get_db_settings_string
 from flask import (
     Flask, flash, g, jsonify, redirect, render_template,
     request, session, url_for, Blueprint
@@ -11,14 +12,8 @@ import re
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{username}:{password}@{host}:{port}/{database}' \
-    .format(
-        username='postgres',
-        password='postgres',
-        host='localhost',
-        port=5433,
-        database='postgres'
-    )
+# To run properly -> configure dotenv.py to your own PSQL settings
+app.config['SQLALCHEMY_DATABASE_URI'] = get_db_settings_string()
 
 app.config['SECRET_KEY'] = 'A random key to use CRF for forms'
 
