@@ -14,9 +14,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{username}:{password}@{host}:{port}/{database}' \
     .format(
         username='postgres',
-        password='killer11',
+        password='postgres',
         host='localhost',
-        port=5432,
+        port=5433,
         database='postgres'
     )
 
