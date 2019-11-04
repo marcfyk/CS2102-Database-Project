@@ -61,12 +61,12 @@ FOREIGN KEY (number) REFERENCES HasCreditCard (number) DEFERRABLE INITIALLY DEFE
 
 
 CREATE TABLE Project (
-    projectID        varchar(100),
+    projectID       varchar(100),
     name            varchar(100) NOT NULL,
-    creation_date    date NOT NULL,
-    expiration_date    date NOT NULL,
-    funds                 integer,
-    rating         integer,
+    creation_date   date NOT NULL,
+    expiration_date date NOT NULL,
+    funds           integer,
+    rating          integer,
     PRIMARY KEY (projectID)
 );
 
