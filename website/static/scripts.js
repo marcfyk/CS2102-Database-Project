@@ -5,3 +5,7 @@ function registrationFormSubmission() {
 function loginFormSubmission() {
   document.forms["login-form"].submit();
 }
+
+function searchSubmission() {
+  document.forms["search-form"].submit();
+}

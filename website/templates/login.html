@@ -6,13 +6,6 @@ Log In
 
 {% block main %}
 <form action="/login" name="login-form" method="POST" class="form">
-
-  {% if data is defined %}
-    <div class="alert alert-danger" role="alert">
-      {{ data.message }}
-    </div>
-  {% endif %}
-
   <div class="form-group">
     <label>Username</label>
     <input autocomplete="off"

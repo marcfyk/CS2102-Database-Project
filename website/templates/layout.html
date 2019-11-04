@@ -28,8 +28,12 @@
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active"><a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a></li>
         <li class="nav-item active"><a class="nav-link" href="/">Projects</a></li>
-        <li class="nav-item active"><a class="nav-link" href="/login">Log In</a></li>
-        <li class="nav-item active"><a class="nav-link" href="/signup">Sign Up</a></li>
+        {% if session.username %}
+          <li class="nav-item active"><a class="nav-link" href="logout">Logout</a></li>
+        {% else %}
+          <li class="nav-item active"><a class="nav-link" href="login">Login</a></li>
+          <li class="nav-item active"><a class="nav-link" href="signup">Sign Up</a></li>
+        {% endif %}
       </ul>
 
       <span class="navbar-text">
@@ -37,16 +41,26 @@
       </span>
 
       <!-- search bar -->
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <form class="form-inline my-2 my-lg-0" name="search-form" action="/search" method="POST">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search Projects..." aria-label="Search" name="search-term">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick="searchSubmission()">Search</button>
       </form>
 
     </nav>
 
     <!-- Page Content -->
     <main>
-      {% block main %}{% endblock %}
+      {% if get_flashed_messages() %}
+      <div class="alert alert-primary alert-dismissible fade show text-center message-flash" role="alert">
+        {{ get_flashed_messages() | join(" ") }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endif %}
+
+      {% block main %}
+      {% endblock %}
     </main>
 
   </body>
