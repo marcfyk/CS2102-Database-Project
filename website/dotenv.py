@@ -10,6 +10,4 @@ def get_db_settings_string():
     host = HOST_NAME
     port = PORT_NUMBER
     database = DATABASE_NAME
-    ret = f'postgresql://{username}:{password}@{host}:{port}/{database}'
-    print(ret)
-    return ret
+    return f'postgresql://{username}:{password}@{host}:{port}/{database}'

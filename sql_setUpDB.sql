@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS Likes CASCADE;
 CREATE TABLE Account (
     username     varchar(100) PRIMARY KEY,
     password     varchar(100),
-    email         varchar(100) UNIQUE NOT NULL
+    email        varchar(100) UNIQUE NOT NULL
 );
  
 CREATE TABLE Follows (

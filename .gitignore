@@ -1,4 +1,4 @@
 .env
-**dotenv.py
-**__pycache
 .vscode
+**__pycache__**
+**dotenv**
