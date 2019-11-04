@@ -1,1 +1,4 @@
 .env
+**dotenv.py
+**__pycache
+.vscode
