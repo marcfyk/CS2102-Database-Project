@@ -1,7 +1,7 @@
 from os import path
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user, login_required, login_user
-from dotenv import get_db_settings_string
+from psql_setting import get_db_settings_string
 from flask import (
     Flask, flash, g, jsonify, redirect, render_template,
     request, session, url_for, Blueprint
