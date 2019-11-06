@@ -73,15 +73,6 @@ def logout():
     flash("Logged out.")
     return redirect("/")
 
-@app.route("/search", methods=["GET", "POST"])
-def search():
-    if request.method == "POST":
-        form = request.form
-        search_term = form["search-term"]
-        flash(f"You typed \"{search_term}\"")
-        return render_template("search.html")
-    return render_template("index.html")
-
 """
 Main Function
 """
