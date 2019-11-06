@@ -11,3 +11,7 @@ function loginFormSubmission() {
 function searchSubmission() {
   document.forms["search-form"].submit();
 }
+
+function createNewProjectSubmission() {
+  document.forms["new-project-form"].submit();
+}

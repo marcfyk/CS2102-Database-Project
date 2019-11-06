@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Create a new Project
+{% endblock %}
+
+{% block main %}
+<h1>Hello, {{ username }}</h1>
+<h4>Please enter the description of your project.</h4>
+
+<div class="content">
+
+  <form action="/new_project"
+        name="new-project-form"
+        method="POST"
+        class="form">
+
+    <div class="form-group">
+      <label>Name of Your Project</label>
+      <input autocomplete="off"
+             autofocus
+             class="form-control"
+             name="project-name"
+             placeholder="Enter Project Name..."
+             type="text">
+    </div>
+
+    <div class="form-group">
+      <label>Funding Goal (in $)</label>
+      <input autocomplete="off"
+             autofocus
+             class="form-control"
+             name="goal"
+             placeholder="Enter Goal..."
+             type="number"
+             step="10">
+    </div>
+
+    <div class="form-group">
+      <label>Product Name</label>
+      <input autocomplete="off"
+             autofocus
+             class="form-control"
+             name="product-name"
+             placeholder="Enter Product Name..."
+             type="text">
+    </div>
+
+    <div class="form-group">
+      <label>Product Price (in $)</label>
+      <input autocomplete="off"
+             autofocus
+             class="form-control"
+             name="product-price"
+             placeholder="Enter Product Price..."
+             type="number"
+             step="10">
+    </div>
+
+    <div class="form-group">
+      <label>Product Description</label>
+      <textarea autocomplete="off"
+                autofocus
+                class="form-control"
+                name="product-description"
+                type="text"
+                rows="10"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Expiration Date</label>
+      <input autocomplete="off"
+             autofocus
+             class="form-control"
+             name="expiration-date"
+             type="date">
+    </div>
+  
+    <button type="button"
+            class="btn btn-primary"
+            onclick="createNewProjectSubmission()">
+      Create Project
+    </button>
+  </form>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Bootstrap Number Spinners -->
+<script src="../static/bootstrap-input-spinner.js"></script>
+<script>
+    $("input[type='number']").inputSpinner()
+</script>
+{% endblock %}

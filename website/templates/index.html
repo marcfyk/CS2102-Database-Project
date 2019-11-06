@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block main %}
+<h1>Welcome to Stratton Oakmont!</h1>
 
-  {% if data is defined %}
-    <div class="alert alert-success" role="alert">
-      {{ data.message }}
-    </div>
-  {% endif %}
-
-  <p>Hello!</p>
+<div class="content">
+  <h2>To create a new project, click here.</h2>
+  <a href="/new_project">Create a new Project</a>
+</div>
+<div class="content">
+  <h2>Some interesting projects...</h2>
+</div>
 {% endblock %}

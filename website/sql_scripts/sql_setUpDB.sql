@@ -215,12 +215,12 @@ AFTER DELETE ON HasCreditCard
 FOR EACH ROW
 EXECUTE PROCEDURE checkDeleteCreditCard();
 
-
-CREATE OR REPLACE FUNCTION getLeaderboard(projectId)
+CREATE OR REPLACE FUNCTION getLeaderboard(projectId varchar(100))
 RETURNS TABLE (username varchar(100)) AS
 $$ BEGIN
 SELECT T.username FROM Transaction T
 WHERE T.projectId = projectId
 GROUP BY T.username
-ORDER BY SUM(T.amount)
-END; $$ LANGUAGE plpgsql;
+ORDER BY SUM(T.amount);
+END;
+$$ LANGUAGE plpgsql;

@@ -9,6 +9,7 @@ from flask import (
 import json
 import sqlite3
 import re
+import datetime
 
 app = Flask(__name__)
 
@@ -76,6 +77,39 @@ def logout():
     session.clear()
     flash("Logged out.")
     return redirect("/")
+
+@app.route("/profile")
+def profile():
+    user = session["username"]
+    query = f"SELECT P.name, P.creation_date, P.expiration_date, P.goal, \
+        P.funds, P.rating FROM Project P, Owns O WHERE O.username='{user}' \
+        AND P.projectId = O.projectId"
+    result = db.session.execute(query).fetchone()
+    return render_template("profile.html", data=result)
+
+@app.route("/new_project", methods=["GET", "POST"])
+def new_project():
+    if request.method == "POST":
+        form = request.form
+
+        project_name = form["project-name"]
+        goal = int(form["goal"])
+        product_name = form["product-name"]
+        product_price = float(form["product-price"])
+        product_desc = form["product-description"]
+        expiration_date = form["expiration-date"]
+
+        # TODO write this query
+        query = f"SELECT 1 FROM Project WHERE name='{project_name}'"
+        project_exists = db.session.execute(query).fetchone()
+        if project_exists:
+            flash("That project name is already taken.")
+            return render_template("new_project.html")
+        else:
+            x = 0
+
+    else:
+        return render_template("new_project.html")
 
 """
 Main Function
