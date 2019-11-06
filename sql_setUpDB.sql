@@ -14,11 +14,10 @@ DROP TABLE IF EXISTS Interested CASCADE;
 DROP TABLE IF EXISTS Reviews CASCADE;
 DROP TABLE IF EXISTS Likes CASCADE;
 
-
 CREATE TABLE Account (
-    username     varchar(100) PRIMARY KEY,
-    password     varchar(100),
-    email        varchar(100) UNIQUE NOT NULL
+    username    varchar(100) PRIMARY KEY,
+    password    varchar(100),
+    email       varchar(100) UNIQUE NOT NULL
 );
  
 CREATE TABLE Follows (
@@ -28,7 +27,7 @@ CREATE TABLE Follows (
 );
 
 CREATE TABLE Address (
-    country    varchar(100),
+    country     varchar(100),
     location    varchar(100),
     PRIMARY KEY (country, location)
 );
@@ -44,88 +43,93 @@ CREATE TABLE HasAddress (
 
 ALTER TABLE Address
 ADD CONSTRAINT C
-FOREIGN KEY (country, location) REFERENCES HasAddress (country, location) DEFERRABLE INITIALLY DEFERRED;
+FOREIGN KEY (country, location) REFERENCES HasAddress (country, location)
+DEFERRABLE INITIALLY DEFERRED;
 
 CREATE TABLE CreditCard (
-number     varchar(100) PRIMARY KEY,
-exp         date
+    number      varchar(100) PRIMARY KEY,
+    exp         date
 );
+
 CREATE TABLE HasCreditCard (
-    Username    varchar(100) REFERENCES Account(username),
-    Number      varchar(100) REFERENCES CreditCard(number) UNIQUE,
+    username    varchar(100) REFERENCES Account(username),
+    number      varchar(100) REFERENCES CreditCard(number),
     PRIMARY KEY (username, number)
 );
+
 ALTER TABLE CreditCard 
 ADD CONSTRAINT C
-FOREIGN KEY (number) REFERENCES HasCreditCard (number) DEFERRABLE INITIALLY DEFERRED;
-
+FOREIGN KEY (number) REFERENCES HasCreditCard (number)
+DEFERRABLE INITIALLY DEFERRED;
 
 CREATE TABLE Project (
     projectID       varchar(100),
     name            varchar(100) NOT NULL,
     creation_date   date NOT NULL,
     expiration_date date NOT NULL,
+    goal            integer,
     funds           integer,
     rating          integer,
     PRIMARY KEY (projectID)
 );
 
 CREATE TABLE Product (
-    productID varchar(100),
-    projectID varchar(100) REFERENCES Project(projectID) ON DELETE CASCADE,
-    productDescription text,
-    productPrice numeric(7,2),
+    productID           varchar(100),
+    projectID           varchar(100) REFERENCES Project(projectID) ON DELETE CASCADE,
+    productDescription  text,
+    productPrice        numeric(7,2),
     PRIMARY KEY (productID, projectID)
 );
 
 CREATE TABLE Transaction (
-    transactionID     serial,
-    Username        varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
+    transactionID     TIMESTAMPTZ,
+    username          varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
     projectID         varchar(100) NOT NULL,
-    productID        varchar(100) NOT NULL,
-    Amount            integer,
+    productID         varchar(100) NOT NULL,
+    amount            integer,
     PRIMARY KEY (transactionID, username, projectID),
     FOREIGN KEY (projectID, productID) 
-    REFERENCES Product (projectID, productID) ON DELETE CASCADE
+    REFERENCES Product(projectID, productID) ON DELETE CASCADE
 );
 
 CREATE TABLE Owns (
     Username     varchar(100) REFERENCES Account(username),
     projectID    varchar(100) REFERENCES Project(projectID),
-    PRIMARY KEY (username, projectID)
+    PRIMARY KEY (projectID)
 );
 
 ALTER TABLE Project
 ADD CONSTRAINT C
-FOREIGN KEY (projectID, name) REFERENCES Owns (projectID, username) DEFERRABLE INITIALLY DEFERRED;
+FOREIGN KEY (projectID, name) REFERENCES Owns (projectID, username)
+DEFERRABLE INITIALLY DEFERRED;
 
 CREATE TABLE Likes (
-    Username     varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
-    projectID     varchar(100) REFERENCES Project(projectID) ON DELETE CASCADE,
+    username     varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
+    projectID    varchar(100) REFERENCES Project(projectID) ON DELETE CASCADE,
     PRIMARY KEY (username, projectID)
 );
 
 CREATE TABLE Category (
-    Name    varchar(100) PRIMARY KEY
+    name    varchar(100) PRIMARY KEY
 );
 
 CREATE TABLE Contains (    
-    projectID     varchar(100) REFERENCES Project(projectID) ON DELETE CASCADE,
-    Name         varchar(100) REFERENCES Category(name) ON DELETE CASCADE,
+    projectID    varchar(100) REFERENCES Project(projectID) ON DELETE CASCADE,
+    name         varchar(100) REFERENCES Category(name) ON DELETE CASCADE,
     PRIMARY KEY (projectID, name)
 );
 
 CREATE TABLE Interested (
-    Username varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
-    Name     varchar(100) REFERENCES Category(name) ON DELETE CASCADE,
-    PRIMARY KEY (Username, name)
+    username varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
+    name     varchar(100) REFERENCES Category(name) ON DELETE CASCADE,
+    PRIMARY KEY (username, name)
 );
 
 CREATE TABLE Reviews (
-    username varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
+    username      varchar(100) REFERENCES Account(username) ON DELETE CASCADE,
     projectID     varchar(100) REFERENCES Project(projectID) ON DELETE CASCADE,
-    Rating integer NOT NULL,
-    Description    text,
+    Rating        integer NOT NULL,
+    description   text,
     PRIMARY KEY (username, projectID),
     CHECK (RATING BETWEEN 1 AND 5)
 );
@@ -145,7 +149,6 @@ CREATE TRIGGER updateProjectTrigger
 AFTER INSERT OR UPDATE ON Transaction
 FOR EACH ROW
 EXECUTE PROCEDURE updateProjectData();
-
 
 CREATE OR REPLACE FUNCTION updateProjectReview() 
 RETURNS TRIGGER AS
@@ -175,7 +178,6 @@ END IF;
 RETURN OLD;
 END; $$ LANGUAGE plpgsql;
 
-
 CREATE TRIGGER deleteAccount
 BEFORE DELETE ON Account
 FOR EACH ROW
@@ -192,11 +194,11 @@ END IF;
 RETURN OLD;
 END; $$ LANGUAGE plpgsql;
 
-
 CREATE TRIGGER deleteAddress
 AFTER DELETE ON HasAddress
 FOR EACH ROW
 EXECUTE PROCEDURE checkDeleteAddress();
+
 
 CREATE OR REPLACE FUNCTION checkDeleteCreditCard()
 RETURNS TRIGGER AS
@@ -214,3 +216,11 @@ FOR EACH ROW
 EXECUTE PROCEDURE checkDeleteCreditCard();
 
 
+CREATE OR REPLACE FUNCTION getLeaderboard(projectId)
+RETURNS TABLE (username varchar(100)) AS
+$$ BEGIN
+SELECT T.username FROM Transaction T
+WHERE T.projectId = projectId
+GROUP BY T.username
+ORDER BY SUM(T.amount)
+END; $$ LANGUAGE plpgsql;
