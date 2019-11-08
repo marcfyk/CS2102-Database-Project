@@ -5,12 +5,34 @@
 {% endblock %}
 
 {% block main %}
+  <table class="table">
+    <th>
+      <tr>
+        <td>S/N</td>
+        <td>Name</td>
+        <td>Date Started</td>
+        <td>Date to End</td>
+        <td>Goal</td>
+        <td>Current Funds</td>
+        <td>Rating</td>
+      </tr>
+    </th>
 
-  {% if data is defined %}
-    <div class="alert alert-success" role="alert">
-      {{ data.message }}
-    </div>
-  {% endif %}
+    <tbody>
+    {% if data != None %} 
+      {% for l in data.itervalues() %}
+        <tr>
+          <td>{{ l.projectId }}</td>
+          <td>{{ l.name }}</td>
+          <td>{{ l.creation_date }}</td>
+          <td>{{ l.expiration_date }}</td>
+          <td>{{ l.goal }}</td>
+          <td>{{ l.funds }}</td>
+          <td>{{ l.rating }}</td>
+        </tr>
+      {% endfor %}
+    {% endif %}
+    </tbody>
 
-  <p>Projects!</p>
+  </table>
 {% endblock %}

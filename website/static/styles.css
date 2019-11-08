@@ -20,3 +20,7 @@ h1 {
 .content h2 {
   font-size: 20px;
 }
+
+strong {
+  font-size: 30px;
+}

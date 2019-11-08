@@ -1,7 +1,9 @@
 from os import path
+from ast import literal_eval
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user, login_required, login_user
 from psql_setting import get_db_settings_string
+from functools import wraps
 from flask import (
     Flask, flash, g, jsonify, redirect, render_template,
     request, session, url_for, Blueprint
@@ -10,6 +12,7 @@ import json
 import sqlite3
 import re
 import datetime
+import queries
 
 app = Flask(__name__)
 
@@ -23,6 +26,14 @@ login_manager.init_app(app)
 
 ROOT = path.dirname(path.realpath(__file__))
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("username") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+    return decorated_function
+
 """
 ROUTES
 """
@@ -32,7 +43,9 @@ def index():
 
 @app.route("/projects", methods = ["GET"])
 def projects():
-    return render_template("projects.html")
+    query = "SELECT * FROM Project"
+    data = db.session.execute(query).fetchone()
+    return render_template("projects.html", data=data)
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -88,28 +101,44 @@ def profile():
     return render_template("profile.html", data=result)
 
 @app.route("/new_project", methods=["GET", "POST"])
+@login_required
 def new_project():
     if request.method == "POST":
         form = request.form
 
-        project_name = form["project-name"]
-        goal = int(form["goal"])
-        product_name = form["product-name"]
-        product_price = float(form["product-price"])
-        product_desc = form["product-description"]
-        expiration_date = form["expiration-date"]
+        data = {
+            "project_name":    form["project-name"],
+            "expiration_date": form["expiration-date"],
+            "goal":            form["goal"],
+            "product_name":    form["product-name"],
+            "product_price":   form["product-price"],
+            "product_desc":    form["product-description"]
+        }
 
-        # TODO write this query
-        query = f"SELECT 1 FROM Project WHERE name='{project_name}'"
+        query = "SELECT 1 FROM Project WHERE name='{}'".format(data["project_name"])
         project_exists = db.session.execute(query).fetchone()
         if project_exists:
             flash("That project name is already taken.")
             return render_template("new_project.html")
         else:
-            x = 0
-
+            now = datetime.date.today()
+            data["creation_date"] = str(now)
+            query = "INSERT INTO Project(name, expiration_date, goal) VALUES ('{}', '{}', '{}')" \
+                .format(
+                    data["project_name"],
+                    data["expiration_date"],
+                    data["goal"]
+                )
+            db.session.execute(query)
+            db.session.commit()
+            return redirect(url_for("render_project_page", data=data))
     else:
         return render_template("new_project.html")
+
+@app.route("/project_page", methods=["GET"])
+def render_project_page():
+    data = literal_eval(request.args["data"]) # convert to python dict
+    return render_template("project_page.html", data=data)
 
 """
 Main Function
