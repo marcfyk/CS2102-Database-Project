@@ -5,18 +5,48 @@ Profile
 {% endblock %}
 
 {% block main %}
-<h1>Hello, {{ username }}</h1>
-
-<p>
-  This is your profile page. Here you can see your projects and those who
-  fervently follow you.
-</p>
+<h1>Hello, {{ session.username }}</h1>
 
 <h2>Your Projects</h2>
+<table class="table" id="project-table">
+  <th>
+    <tr>
+      <td>S/N</td>
+      <td>Name</td>
+      <td>Date Started</td>
+      <td>Date to End</td>
+      <td>Goal</td>
+      <td>Current Funds</td>
+      <td>Rating</td>
+    </tr>
+  </th>
 
-<p>
-  Insert projects here
-</p>
+  <tbody>
+  {% if data != None %} 
+    {% for d in data %}
+      <tr>
+        <td>{{ d[0] }}</td>
+        <td>{{ d[1] }}</td>
+        <td>{{ d[2] }}</td>
+        <td>{{ d[3] }}</td>
+        <td>{{ d[4] }}</td>
+        <td>{{ d[5] }}</td>
+        <td>{{ d[6] }}</td>
+        <td>
+          <form action="/get_project" name="get-project-form-{{ d[0] }}" method="POST" class="form">
+            <input hidden value="{{ d[1] }}" name="project-name">
+            <button type="button"
+                    class="btn btn-primary"
+                    onclick="getTheProject({{ d[0] }})">
+              See Project
+            </button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+  </tbody>
+</table>
 
 <h2>Follower VIPs</h2>
 

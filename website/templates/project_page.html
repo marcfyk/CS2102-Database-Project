@@ -12,12 +12,43 @@
   <p>{{ data.creation_date }}</p>
   <h2>Date End</h2>
   <p>{{ data.expiration_date }}</p>
+  <h2>Category</h2>
+  <p>{{ data.category }}</p>
 </div>
 <br>
 <div class="content">
-  <h3>Product: {{ data.product_name }}</h3>
+  <h2>Product: {{ data.product_name }}</h2>
   <p>Product Price: <strong>${{ data.product_price }}</strong></p>
-  <h3>Description of Product:</h3>
+  <h2>Description of Product:</h2>
   <p>{{ data.product_desc }}</p>
+  <h2>Amount funded</h2>
+  {% if data.funded is defined %}
+  <p>{{ data.funded }}</p>
+  {% else %}
+  <p>You have not funded this yet.</p>
+  {% endif %}
+</div>
+
+<div class="content">
+  <h3>Fund this project!</h3>
+  <form method="POST" action="/fund" name="fund-form">
+    <div class="form-group">
+      <input autocomplete="off"
+             autofocus
+             class="form-control"
+             name="fund-amount"
+             value=10
+             step=10
+             type="number">
+
+      <input hidden value='{{ data.project_name }}' name='project-name'>
+      <input hidden value='{{ data.product_name }}' name='product-name'>
+      
+      <button type="button"
+              class="btn btn-primary"
+              onclick="document.forms['fund-form'].submit()">
+        Fund
+      </button>
+  </form>
 </div>
 {% endblock %}
