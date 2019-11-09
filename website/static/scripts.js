@@ -15,3 +15,11 @@ function searchSubmission() {
 function createNewProjectSubmission() {
   document.forms["new-project-form"].submit();
 }
+
+function ccFormSubmission() {
+  document.forms["cc-form"].submit();
+}
+
+function addressFormSubmission() {
+  document.forms["address-form"].submit();
+}

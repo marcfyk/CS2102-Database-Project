@@ -12,7 +12,6 @@ import json
 import sqlite3
 import re
 import datetime
-import queries
 
 app = Flask(__name__)
 
@@ -139,6 +138,72 @@ def new_project():
 def render_project_page():
     data = literal_eval(request.args["data"]) # convert to python dict
     return render_template("project_page.html", data=data)
+
+@app.route("/credit_card", methods=["GET", "POST"])
+@login_required
+def credit_card():
+    if request.method == "POST":
+        form = request.form
+        cc_number = form["cc-number"]
+        cc_expire_mm = form["cc-expire-mm"]
+        cc_expire_yy = form["cc-expire-yy"]
+        cc_expire_date = "{}-{}-01".format(cc_expire_yy, cc_expire_mm)
+        query = "SELECT 1 FROM HasCreditCard WHERE username='{}' AND number='{}'".format(
+            session["username"], cc_number
+        )
+        cc_exists = db.session.execute(query).fetchone()
+        if cc_exists:
+            flash("You already have that credit card!")
+            return render_template("credit_card.html")
+        else:
+            query = "INSERT INTO CreditCard(number, exp) VALUES ('{}', '{}')".format(
+                cc_number, cc_expire_date
+            )
+            query2 = "INSERT INTO HasCreditCard(username, number) VALUES('{}', '{}')".format(
+                session["username"], cc_number
+            )
+            db.session.execute(query)
+            db.session.execute(query2)
+            db.session.commit()
+            flash("Credit Card saved.")
+            return render_template("credit_card.html")
+    else:
+        return render_template("credit_card.html")
+
+@app.route("/address", methods=["GET", "POST"])
+@login_required
+def address():
+    if request.method == "POST":
+        form = request.form
+        addr = form["address"]
+        country = form["country"]
+
+        query = "SELECT 1 FROM HasAddress WHERE username='{}' \
+                AND country='{}' AND location='{}'".format(
+            session["username"],
+            country,
+            addr
+        )
+        exists = db.session.execute(query).fetchone()
+        if exists:
+            flash("Address already in your profile.")
+            return render_template("address.html")
+        else:
+            query = "INSERT INTO Address(country, location) VALUES ('{}', '{}')".format(
+                country, addr
+            )
+            query2 = "INSERT INTO HasAddress(username, country, location) \
+                     VALUES('{}', '{}', '{}')".format(
+                session["username"], country, addr
+            )
+            db.session.execute(query)
+            db.session.execute(query2)
+            db.session.commit()
+            flash("Address saved.")
+            return render_template("address.html")
+    else:
+        return render_template("address.html")
+
 
 """
 Main Function

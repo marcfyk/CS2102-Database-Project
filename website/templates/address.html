@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Address
+{% endblock %}
+
+{% block main %}
+<form action="/address" name="address-form" method="POST" class="form">
+
+  <div class="form-group">
+    <label>Address</label>
+    <input autocomplete="off"
+           autofocus
+           class="form-control"
+           name="address"
+           placeholder="Enter address..."
+           type="text">
+  </div>
+
+  <div class="form-group">
+    <label>Country</label>
+    <input autocomplete="off"
+           autofocus
+           class="form-control"
+           name="country"
+           placeholder="Enter Country..."
+           type="text">
+  </div>
+
+  <button type="button"
+          class="btn btn-primary"
+          onclick="addressFormSubmission()">
+    Submit
+  </button>
+</form>
+{% endblock %}
