@@ -42,7 +42,7 @@ function addProjectTableRowListeners() {
           contentType: "application/json",
           dataType: "json",
           data: JSON.stringify(data),
-        })
+        });
       }
     }
 
