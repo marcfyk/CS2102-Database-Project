@@ -7,10 +7,13 @@
 {% block main %}
 <h1>Welcome to Stratton Oakmont!</h1>
 
+{% if session.username %}
 <div class="content">
   <h2>To create a new project, click here.</h2>
   <a href="/new_project">Create a new Project</a>
 </div>
+{% endif %}
+
 <div class="content">
   <h2>The most international project owners</h2>
 
