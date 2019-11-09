@@ -8,4 +8,4 @@ WITH X AS (
 SELECT owner
 FROM X
 GROUP BY owner
-HAVING COUNT(country) > ALL(SELECT COUNT(country) FROM X);
+HAVING COUNT(country) >= ALL(SELECT COUNT(country) FROM X);
