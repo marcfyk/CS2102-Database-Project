@@ -1,6 +1,7 @@
 from os import path
 from ast import literal_eval
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import exc
 from flask_login import LoginManager, current_user, login_required, login_user
 from psql_setting import get_db_settings_string
 from functools import wraps
@@ -45,7 +46,16 @@ def logout():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    query = "WITH X AS (SELECT Owns.username AS owner, Transaction.projectId, \
+        HasAddress.country FROM Owns, Transaction, HasAddress \
+        WHERE Owns.projectId = Transaction.projectId \
+        AND Transaction.username = HasAddress.username) SELECT owner \
+            FROM X \
+            GROUP BY owner \
+            HAVING COUNT(country) >= ALL(SELECT COUNT(country) FROM X GROUP BY owner)"
+
+    data = db.session.execute(query).fetchall()
+    return render_template("index.html", data=data)
 
 @app.route("/projects", methods = ["GET"])
 def projects():
@@ -160,11 +170,17 @@ def new_project():
                     data["category"]
                 )
             
-            db.session.execute(query)
-            db.session.execute(query2)
-            db.session.execute(query3)
-            db.session.commit()
-            return redirect(url_for("render_project_page", data=data))
+            try:
+                db.session.execute(query)
+                db.session.execute(query2)
+                db.session.execute(query3)
+                db.session.commit()
+                return redirect(url_for("render_project_page", data=data))
+            except exc.IntegrityError as e:
+                db.session.rollback()
+                flash("An error has occured.")
+                return render_template("new_project.html")
+
     else:
         return render_template("new_project.html")
 
@@ -295,6 +311,13 @@ def fund():
         if not has_credit_card():
             flash("You do not have a credit card available to support this.")
             return redirect(request.referrer)
+        
+        query = "SELECT productPrice FROM Product WHERE productId='{}'".format(product_id)
+        data = db.session.execute(query).fetchone()
+        if int(num) < int(data[0]):
+            flash("Offering too little for the product!")
+            return redirect(request.referrer)
+
         query = "INSERT INTO Transaction(username, projectId, productId, amount) \
             VALUES ('{}', {}, '{}', {})".format(
             session["username"],
@@ -307,6 +330,36 @@ def fund():
         flash(f"Funded ${num} to {project_name}")
         return redirect("/projects")
     return redirect(request.referrer)
+
+@app.route("/obsession")
+@login_required
+def obsession():
+    query = \
+        f" WITH Y AS ( \
+            SELECT username, COUNT(projectId) \
+            FROM Owns \
+            GROUP BY username \
+        ), \
+        X AS ( \
+            SELECT DISTINCT \
+                O.username AS owner, \
+                O.projectId AS projectId, \
+                T.username AS buyer \
+            FROM Owns O, Transaction T \
+            WHERE O.projectId = T.projectId \
+        ) \
+        SELECT X.owner, X.buyer \
+        FROM X INNER JOIN Y \
+        ON X.buyer = Y.username \
+        AND Y.count = ( \
+            SELECT COUNT(Z.projectId) \
+            FROM X Z \
+            WHERE Z.owner = X.owner \
+            AND Z.buyer = X.buyer \
+        )"
+    data = db.session.execute(query).fetchall()
+    print(data)
+    return render_template("obsession.html", data=data)
 
 def has_credit_card():
     if not session["username"]:

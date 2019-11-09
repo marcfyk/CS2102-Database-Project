@@ -224,16 +224,20 @@ EXECUTE PROCEDURE updateProjectReview();
 CREATE OR REPLACE FUNCTION checkDeleteAccount()
 RETURNS TRIGGER AS 
 $$ BEGIN
-IF (EXISTS (SELECT 1 FROM Owns O WHERE O.username = OLD.username)) THEN 
+IF (EXISTS (SELECT 1 FROM Owns O, Project P
+    WHERE O.username = OLD.username
+    AND NOW() < P.expiration_date)) THEN 
 RETURN NULL;
 END IF;
-RETURN OLD;
+RETURN NEW;
 END; $$ LANGUAGE plpgsql;
-
+ 
+ 
 CREATE TRIGGER deleteAccount
 BEFORE DELETE ON Account
 FOR EACH ROW
 EXECUTE PROCEDURE checkDeleteAccount();
+
 
 CREATE OR REPLACE FUNCTION checkDeleteCreditCard()
 RETURNS TRIGGER AS
@@ -331,7 +335,8 @@ INSERT INTO Account(username, password, email) VALUES('soc_printer', 'password',
 INSERT INTO Account(username, password, email) VALUES('whiteboard_marker', 'password', 'chalk@email.com');
 INSERT INTO Account(username, password, email) VALUES('why_utown_so_crowded', 'password', 'hangout@email.com');
 INSERT INTO Account(username, password, email) VALUES('1234', '1234', '1234@email.com');
-
+INSERT INTO Account(username, password, email) VALUES('happy', 'iMHappy', 'happy@gmail.com');
+INSERT INTO Account(username, password, email) VALUES('sad' , 'iMSad', 'sad@gmail.com');
 INSERT INTO Follows(follower, followed) VALUES('john_connor', 'obama_b');
 INSERT INTO Follows(follower, followed) VALUES('fiddle_player', 'obama_b');
 INSERT INTO Follows(follower, followed) VALUES('georgia_boi', 'obama_b');
@@ -349,6 +354,8 @@ INSERT INTO Follows(follower, followed) VALUES('1234', 'table_legs');
 INSERT INTO Follows(follower, followed) VALUES('soc_printer', 'table_legs');
 INSERT INTO Follows(follower, followed) VALUES('hydrohomie', 'fiddle_player');
 INSERT INTO Follows(follower, followed) VALUES('obama_b', 'fiddle_player');
+INSERT INTO Follows(follower, followed) VALUES('happy', 'sad');
+
 
 INSERT INTO Address(country, location) VALUES('Singapore', '20 Street, 999999');
 INSERT INTO Address(country, location) VALUES('United States', '20 Street, 999999');
@@ -362,7 +369,11 @@ INSERT INTO Address(country, location) VALUES('Soviet Russia', '20 Street, 99999
 INSERT INTO Address(country, location) VALUES('Cambodia', '20 Street, 999999');
 INSERT INTO Address(country, location) VALUES('Atlantica', '20 Street, 999999');
 INSERT INTO Address(country, location) VALUES('Gotham', '20 Street, 999999');
+INSERT INTO Address(country, location) VALUES('Singapore', '20 Street 999998');
+INSERT INTO Address(country, location) VALUES('United States', '20 Street 999998');
 
+INSERT INTO HasAddress(username, country, location) VALUES('happy' , 'United States' , '20 Street 999998');
+INSERT INTO HasAddress(username, country, location) VALUES('sad' , 'Singapore' , '20 Street 999998');
 INSERT INTO HasAddress(username, country, location) VALUES('john_connor', 'Singapore', '20 Street, 999999');
 INSERT INTO HasAddress(username, country, location) VALUES('obama_b', 'United States', '20 Street, 999999');
 INSERT INTO HasAddress(username, country, location) VALUES('why_utown_so_crowded', 'Dominican Republic', '20 Street, 999999');
@@ -376,6 +387,8 @@ INSERT INTO HasAddress(username, country, location) VALUES('not_a_sponsor', 'Cam
 INSERT INTO HasAddress(username, country, location) VALUES('georgia_boi', 'Atlantica', '20 Street, 999999');
 INSERT INTO HasAddress(username, country, location) VALUES('water_bottle', 'Gotham', '20 Street, 999999');
 
+INSERT INTO CreditCard(number, exp) VALUES(2000000000000000, '2019-12-01');
+INSERT INTO CreditCard(number, exp) VALUES(1000000000000000, '2019-12-01');
 INSERT INTO CreditCard(number, exp) VALUES(1111111111111111, '2019-12-01');
 INSERT INTO CreditCard(number, exp) VALUES(2222222222222222, '2020-11-01');
 INSERT INTO CreditCard(number, exp) VALUES(3333333333333333, '2019-10-01');
@@ -390,6 +403,8 @@ INSERT INTO CreditCard(number, exp) VALUES(3434343434343434, '2019-02-01');
 INSERT INTO CreditCard(number, exp) VALUES(5656565656565656, '2020-01-01');
 INSERT INTO CreditCard(number, exp) VALUES(7878787878787878, '2019-12-01');
 
+INSERT INTO HasCreditCard(username, number) VALUES('happy', 2000000000000000);
+INSERT INTO HasCreditCard(username, number) VALUES('sad', 1000000000000000);
 INSERT INTO HasCreditCard(username, number) VALUES('john_connor', 1111111111111111);
 INSERT INTO HasCreditCard(username, number) VALUES('obama_b', 2222222222222222);
 INSERT INTO HasCreditCard(username, number) VALUES('fiddle_player', 3333333333333333);
@@ -405,63 +420,79 @@ INSERT INTO HasCreditCard(username, number) VALUES('whiteboard_marker', 56565656
 INSERT INTO HasCreditCard(username, number) VALUES('1234', 7878787878787878);
 
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
-    VALUES(1, 'Self-Cleaning Water Bottle', '2019-11-09', '2020-12-01', 200000, 0);
+    VALUES(1, 'Self-Cleaning Water Bottle', '2019-11-09', '2020-12-01', 20000, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
     VALUES(2, 'Amazing Mouse', '2019-11-09', '2020-12-01', 1000, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
-    VALUES(3, '$50 Stupendous Kitchen Rags', '2019-11-09', '2020-12-01', 100000, 0);
+    VALUES(3, '$50 Stupendous Kitchen Rags', '2019-11-09', '2020-12-01', 1000, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
     VALUES(4, 'Donald Trumps Comb', '2019-11-09', '2020-12-01', 10, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
     VALUES(5, 'Japanese Notebook', '2019-11-09', '2020-12-01', 10000, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
-    VALUES(6, 'Intel 9nm Chipset', '2019-11-09', '2020-12-01', 123432, 0);
+    VALUES(6, 'Intel 9nm Chipset', '2019-11-09', '2020-12-01', 12342, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
-    VALUES(7, 'Smart Table Scam', '2019-11-09', '2020-12-01', 1000000, 0);
+    VALUES(7, 'Smart Table Scam', '2019-11-09', '2020-12-01', 10000, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
-    VALUES(8, 'Pencilcase woven with threads from Tibetan Yak Hairs', '2019-11-09', '2020-12-01', 500000, 0);
+    VALUES(8, 'Pencilcase woven with threads from Tibetan Yak Hairs', '2019-11-09', '2020-12-01', 5000, 0);
 INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
-    VALUES(9, '1000pc Printer Paper', '2019-11-09', '2020-12-01', 420420, 0);
+    VALUES(9, '1000pc Printer Paper', '2019-11-09', '2020-12-01', 42420, 0);
+INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
+    VALUES(10, 'hiCards', '2019-11-09', '2020-12-01', 20000, 0);
+INSERT INTO Project(projectId, name, creation_date, expiration_date, goal, funds)
+    VALUES(11, 'byeCards', '2019-11-09', '2020-12-01', 200, 0);
 
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Self-Cleaning Water Bottle', 1, 'An amazing self-cleaning water bottle!!!', 100);
+    VALUES(1, 1, 'An amazing self-cleaning water bottle!!!', 100);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Finalmouse 2016', 2, 'Finalmouse 2016 - up your game with this amazing mouse.', 250);
+    VALUES(2, 2, 'Finalmouse 2016 - up your game with this amazing mouse.', 250);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Kitchen Rags', 3, 'The kleenex killer, get your $50 overpriced kitchen rags today!', 51);
+    VALUES(3, 3, 'The kleenex killer, get your $50 overpriced kitchen rags today!', 51);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Donald Trump Comb', 4, 'Make yourself look as fabulous as Donald Trump for only $1', 1);
+    VALUES(4, 4, 'Make yourself look as fabulous as Donald Trump for only $1', 1);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Japanese Notebook', 5, 'Made from the trees from Nagasaki', 20);
+    VALUES(5, 5, 'Made from the trees from Nagasaki', 20);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Intel 9nm Chipset', 6, 'If only Intel stopped working on 14nm', 600);
+    VALUES(6, 6, 'If only Intel stopped working on 14nm', 600);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Smart Table', 7, 'Lets you use an app to control your table - so smart!', 10000);
+    VALUES(7, 7, 'Lets you use an app to control your table - so smart!', 10000);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Tibetan Yak Hair Pencilcase', 8, 'Only the most durable threads from Tibetan Yak Hairs are used to create this pencilcase', 100);
+    VALUES(8, 8, 'Only the most durable threads from Tibetan Yak Hairs are used to create this pencilcase', 100);
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
-    VALUES('Lots of Printer Paper', 9, 'An amazing self-cleaning water bottle!!!', 100);
+    VALUES(9, 9, 'An amazing self-cleaning water bottle!!!', 100);
+INSERT INTO Product(productId, projectId, productDescription, productPrice)
+    VALUES(10, 10, 'bye cards', 10);
+INSERT INTO Product(productId, projectId, productDescription, productPrice)
+    VALUES(11, 11, 'hi cards', 10);
 
 INSERT INTO Owns(username, projectId) VALUES('hydrohomie', 1);
-INSERT INTO Owns(username, projectId) VALUES('obama_b',  2);
-INSERT INTO Owns(username, projectId) VALUES('table_legs',  3);
-INSERT INTO Owns(username, projectId) VALUES('soc_printer',  4);
-INSERT INTO Owns(username, projectId) VALUES('whiteboard_marker',  5);
-INSERT INTO Owns(username, projectId) VALUES('1234',  6);
-INSERT INTO Owns(username, projectId) VALUES('water_bottle',  7);
-INSERT INTO Owns(username, projectId) VALUES('sony_is',  8);
-INSERT INTO Owns(username, projectId) VALUES('john_connor',  9);
+INSERT INTO Owns(username, projectId) VALUES('obama_b', 2);
+INSERT INTO Owns(username, projectId) VALUES('table_legs', 3);
+INSERT INTO Owns(username, projectId) VALUES('soc_printer', 4);
+INSERT INTO Owns(username, projectId) VALUES('whiteboard_marker', 5);
+INSERT INTO Owns(username, projectId) VALUES('1234', 6);
+INSERT INTO Owns(username, projectId) VALUES('water_bottle', 7);
+INSERT INTO Owns(username, projectId) VALUES('sony_is', 8);
+INSERT INTO Owns(username, projectId) VALUES('john_connor', 9);
+INSERT INTO Owns(username, projectId) VALUES('happy', 10);
+INSERT INTO Owns(username, projectId) VALUES('sad', 11);
 
 INSERT INTO Transaction(username, projectId, productId, amount)
-    VALUES('hydrohomie', 5, 'Japanese Notebook', 995);
+    VALUES('hydrohomie', 2, 2, 995);
 INSERT INTO Transaction(username, projectId, productId, amount)
-    VALUES('obama_b', 3, 'Kitchen Rags', 10000);
+    VALUES('obama_b', 2, 2, 10000);
 INSERT INTO Transaction(username, projectId, productId, amount)
-    VALUES('1234', 2, 'Finalmouse 2016', 500);
+    VALUES('1234', 2, 2, 500);
 INSERT INTO Transaction(username, projectId, productId, amount)
-    VALUES('table_legs', 7, 'Smart Table', 20000);
+    VALUES('table_legs', 7, 7, 20000);
 INSERT INTO Transaction(username, projectId, productId, amount)
-    VALUES('soc_printer', 8, 'Tibetan Yak Hair Pencilcase', 100);
+    VALUES('soc_printer', 8, 8, 100);
+INSERT INTO Transaction(username, projectId, productId, amount)
+    VALUES('happy', 2, 2, 10000);
+INSERT INTO Transaction(username, projectId, productId, amount)
+    VALUES('sad', 2, 2, 10000);
+INSERT INTO Transaction(username, projectId, productId, amount)
+    VALUES('georgia_boi', 2, 2, 10000);
 
 INSERT INTO Likes(username, projectId) VALUES('hydrohomie', 1);
 INSERT INTO Likes(username, projectId) VALUES('water_bottle', 1);

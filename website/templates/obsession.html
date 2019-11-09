@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Obsession
+{% endblock %}
+
+{% block main %}
+<h1>Hello, {{ session.username }}</h1>
+
+<h2>These are your follower VIPs</h2>
+
+<table class="table" id="project-table">
+  <th><tr><td>Follower VIPs</td></tr></th>
+
+  <tbody>
+  {% if data != None %} 
+    {% for d in data %}
+      <tr>
+        <td>{{ d[1] }}</td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

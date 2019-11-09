@@ -12,6 +12,18 @@
   <a href="/new_project">Create a new Project</a>
 </div>
 <div class="content">
-  <h2>Some interesting projects...</h2>
+  <h2>The most international project owners</h2>
+  <table class="table" id="project-table">
+    <th><tr><td>Project Owners</td></tr></th>
+    <tbody>
+    {% if data != None %} 
+      {% for d in data %}
+        <tr>
+          <td>{{ d[0] }}</td>
+        </tr>
+      {% endfor %}
+    {% endif %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}
