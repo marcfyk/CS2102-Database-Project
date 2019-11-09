@@ -12,7 +12,7 @@ X AS (
     FROM Owns O, Transaction T
     WHERE O.projectId = T.projectId
 )
-SELECT *
+SELECT X.owner, X.buyer
 FROM X INNER JOIN Y
 ON X.buyer = Y.username
 AND Y.count = (
