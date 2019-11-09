@@ -96,11 +96,18 @@ def logout():
 @app.route("/profile")
 def profile():
     user = session["username"]
-    query = f"SELECT P.name, P.creation_date, P.expiration_date, P.goal, \
-        P.funds, P.rating FROM Project P, Owns O WHERE O.username='{user}' \
-        AND P.projectId = O.projectId"
-    result = db.session.execute(query).fetchone()
-    return render_template("profile.html", data=result)
+    query = "SELECT * FROM Owns WHERE username='{}'".format(user)
+    result = db.session.execute(query).fetchall()
+    projects = []
+    for i in result:
+        projects.append(int(str(i[1])))
+    data = []
+    for i in projects:
+        query = "SELECT * FROM Project WHERE projectId={}".format(i)
+        result = db.session.execute(query).fetchone()
+        data.append(result)
+
+    return render_template("profile.html", data=data)
 
 @app.route("/new_project", methods=["GET", "POST"])
 @login_required
@@ -114,7 +121,8 @@ def new_project():
             "goal":            form["goal"],
             "product_name":    form["product-name"],
             "product_price":   form["product-price"],
-            "product_desc":    form["product-description"]
+            "product_desc":    form["product-description"],
+            "category":        form["category"]
         }
 
         query = "SELECT 1 FROM Project WHERE name='{}'".format(data["project_name"])
@@ -148,6 +156,11 @@ def new_project():
                     session["username"],
                     data["project_id"]
                 )
+            query4 = "INSERT INTO Contains(projectId, name) VALUES({}, '{}')" \
+                .format(
+                    data["project_id"],
+                    data["category"]
+                )
             
             db.session.execute(query)
             db.session.execute(query2)
@@ -167,6 +180,16 @@ def get_project():
         ret = db.session.execute(query).fetchone()
         query = "SELECT * FROM Product WHERE projectId={}".format(ret[0])
         ret2 = db.session.execute(query).fetchone()
+        query = "SELECT name FROM Contains WHERE projectId={}".format(ret[0])
+        ret3 = db.session.execute(query).fetchone()
+        query = "SELECT amount FROM Transaction WHERE projectId={} AND username='{}'".format(
+            ret[0], session["username"]
+        )
+        ret4 = db.session.execute(query).fetchone()
+        total = 0
+
+        for i in ret4:
+            total += int(i)
 
         data = {
             "project_name":    str(ret[1]),
@@ -174,7 +197,9 @@ def get_project():
             "expiration_date": str(ret[3]),
             "product_name":    str(ret2[0]),
             "product_price":   str(ret2[3]),
-            "product_desc":    str(ret2[2])
+            "product_desc":    str(ret2[2]),
+            "category":        str(ret3[0]),
+            "funded":          str(total)
         }
 
         return redirect(url_for("render_project_page", data=data))
@@ -250,6 +275,40 @@ def address():
     else:
         return render_template("address.html")
 
+@app.route("/fund", methods=["GET", "POST"])
+def fund():
+    if request.method == "POST":
+        form = request.form
+        num = form["fund-amount"]
+        project_name = form["project-name"]
+        project_id = db.session.execute(f"SELECT projectId FROM Project WHERE name='{project_name}'").fetchone()[0]
+        product_id = form["product-name"]
+        if (int(num) < 0):
+            return redirect(request.referrer)
+        if (int(num) > 10**5):
+            flash("The specified amount is too much.")
+            return redirect(request.referrer)
+        if not has_credit_card():
+            flash("You do not have a credit card available to support this.")
+            return redirect(request.referrer)
+        query = "INSERT INTO Transaction(username, projectId, productId, amount) \
+            VALUES ('{}', {}, '{}', {})".format(
+            session["username"],
+            project_id,
+            product_id,
+            num
+        )
+        db.session.execute(query)
+        db.session.commit()
+        flash(f"Funded ${num} to {project_name}")
+
+    return redirect(request.referrer)
+
+def has_credit_card():
+    if not session["username"]:
+        return False
+    return db.session.execute(f"SELECT 1 FROM HasCreditCard WHERE \
+            username='{session['username']}'").fetchone()
 
 """
 Main Function
