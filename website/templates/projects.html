@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-  <table class="table">
+  <table class="table" id="project-table">
     <th>
       <tr>
         <td>S/N</td>
@@ -20,19 +20,21 @@
 
     <tbody>
     {% if data != None %} 
-      {% for l in data.itervalues() %}
+      {% for d in data %}
         <tr>
-          <td>{{ l.projectId }}</td>
-          <td>{{ l.name }}</td>
-          <td>{{ l.creation_date }}</td>
-          <td>{{ l.expiration_date }}</td>
-          <td>{{ l.goal }}</td>
-          <td>{{ l.funds }}</td>
-          <td>{{ l.rating }}</td>
+        {% for v in d %}
+          <td>{{ v }}</td>
+        {% endfor %}
         </tr>
       {% endfor %}
     {% endif %}
     </tbody>
 
   </table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+addProjectTableRowListeners();
+</script>
 {% endblock %}

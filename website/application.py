@@ -12,6 +12,9 @@ import json
 import sqlite3
 import re
 import datetime
+import pprint
+
+pp = pprint.PrettyPrinter(indent=4)
 
 app = Flask(__name__)
 
@@ -43,7 +46,7 @@ def index():
 @app.route("/projects", methods = ["GET"])
 def projects():
     query = "SELECT * FROM Project"
-    data = db.session.execute(query).fetchone()
+    data = db.session.execute(query).fetchall()
     return render_template("projects.html", data=data)
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -133,6 +136,33 @@ def new_project():
             return redirect(url_for("render_project_page", data=data))
     else:
         return render_template("new_project.html")
+
+@app.route("/get_project", methods=["GET", "POST"])
+def get_project():
+    if request.method == "POST":
+        name = request.get_json()["name"]
+        query = "SELECT * FROM Project WHERE name='{}'".format(name)
+        ret = db.session.execute(query).fetchone()
+        query = "SELECT * FROM Product WHERE projectId={}".format(ret[0])
+        ret2 = db.session.execute(query).fetchone()
+
+        for i in ret:
+            print(i)
+        for i in ret2:
+            print(i)
+
+        data = {
+            "project_name": ret[1],
+            "creation_date": ret[2],
+            "expiration_date": ret[3],
+            "product_name": ret2[0],
+            "product_price": ret2[3],
+            "product_desc": ret2[2]
+        }
+        print(data)
+
+        return redirect(url_for("render_project_page", data=data))
+    return render_template("projects.html")
 
 @app.route("/project_page", methods=["GET"])
 def render_project_page():
