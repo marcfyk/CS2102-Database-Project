@@ -14,8 +14,6 @@ import re
 import datetime
 import pprint
 
-pp = pprint.PrettyPrinter(indent=4)
-
 app = Flask(__name__)
 
 # To run properly -> configure dotenv.py to your own PSQL settings
@@ -39,6 +37,12 @@ def login_required(f):
 """
 ROUTES
 """
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("Logged out.")
+    return redirect("/")
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -86,12 +90,6 @@ def login():
         else:
             flash("Sorry, that username does not exist.")
     return render_template("login.html")
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash("Logged out.")
-    return redirect("/")
 
 @app.route("/profile")
 def profile():
@@ -182,14 +180,19 @@ def get_project():
         ret2 = db.session.execute(query).fetchone()
         query = "SELECT name FROM Contains WHERE projectId={}".format(ret[0])
         ret3 = db.session.execute(query).fetchone()
-        query = "SELECT amount FROM Transaction WHERE projectId={} AND username='{}'".format(
-            ret[0], session["username"]
-        )
-        ret4 = db.session.execute(query).fetchone()
-        total = 0
 
-        for i in ret4:
-            total += int(i)
+        total = 0
+        if "username" in session:
+            query = "SELECT amount FROM Transaction WHERE projectId={} AND username='{}'".format(ret[0], session["username"])
+            ret4 = db.session.execute(query).fetchall()
+            for i in ret4:
+                total += float(i[0])
+
+        query = "SELECT amount FROM Transaction WHERE projectId={}".format(ret[0])
+        ret5 = db.session.execute(query).fetchall()
+        total2 = 0
+        for i in ret5:
+            total2 += float(i[0])
 
         data = {
             "project_name":    str(ret[1]),
@@ -199,7 +202,8 @@ def get_project():
             "product_price":   str(ret2[3]),
             "product_desc":    str(ret2[2]),
             "category":        str(ret3[0]),
-            "funded":          str(total)
+            "user_funded":     str(total),
+            "funded":          str(total2)
         }
 
         return redirect(url_for("render_project_page", data=data))
@@ -301,7 +305,7 @@ def fund():
         db.session.execute(query)
         db.session.commit()
         flash(f"Funded ${num} to {project_name}")
-
+        return redirect("/projects")
     return redirect(request.referrer)
 
 def has_credit_card():

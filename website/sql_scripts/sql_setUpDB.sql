@@ -134,7 +134,8 @@ DECLARE transactionID TIMESTAMPTZ;
 BEGIN
 projectID := NEW.projectID;
 transactionID := NEW.transactionID;
-IF EXISTS (SELECT * FROM Project P WHERE P.projectID = NEW.projectID AND P.expiration_date::date > transactionID) THEN
+IF EXISTS (SELECT * FROM Project P WHERE P.projectID = NEW.projectID
+    AND P.expiration_date::date < transactionID::date) THEN
 RETURN NULL;
 END IF;
 RETURN NEW;
@@ -181,31 +182,42 @@ END; $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION updateFunding()
 RETURNS TRIGGER AS
 $$ BEGIN
+IF (EXISTS (SELECT 1 FROM Transaction T WHERE T.projectID = NEW.projectID)) THEN
 UPDATE project
-SET funds = (SELECT SUM(amount) FROM Transaction T WHERE T.projectID = NEW.projectId)
+SET funds = (SELECT SUM(amount) FROM Transaction T WHERE T.projectID = NEW.projectID)
 FROM Project P
-WHERE P.projectID = NEW.projectId;
-RETURN NEW; 
+WHERE P.projectID = NEW.projectID;
+RETURN NEW;
+END IF;
+UPDATE project
+SET funds = 0
+FROM Project P
+WHERE P.projectID = NEW.projectID;
+RETURN NEW;
 END; $$ LANGUAGE plpgsql;
-
+ 
 CREATE TRIGGER updateFunds 
-AFTER INSERT ON Transaction 
+AFTER INSERT OR UPDATE OR DELETE ON Transaction 
 FOR EACH ROW
 EXECUTE FUNCTION updateFunding();
 
 CREATE OR REPLACE FUNCTION updateProjectReview() 
 RETURNS TRIGGER AS $$
-DECLARE projectID integer; 
 BEGIN
-projectID := NEW.projectID;
+IF (EXISTS (SELECT 1 FROM Reviews WHERE NEW.projectID = projectID)) THEN
 UPDATE Project P
 SET rating = (SELECT AVG(rating) as average FROM Reviews R WHERE NEW.projectID = R.projectID)
 WHERE P.projectID = NEW.projectID;
 RETURN NEW;
+END IF;
+UPDATE Project P
+SET rating = 0
+WHERE P.projectID = NEW.projectID;
+RETURN NEW;
 END; $$ LANGUAGE plpgsql;
-
+ 
 CREATE TRIGGER projectReview
-AFTER INSERT OR UPDATE ON Reviews
+AFTER INSERT OR UPDATE OR DELETE ON Reviews
 FOR EACH ROW
 EXECUTE PROCEDURE updateProjectReview();
 

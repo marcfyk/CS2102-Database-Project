@@ -1,5 +1,3 @@
-let curr_search_term = "";
-
 function registrationFormSubmission() {
   document.forms["signup-form"].submit();
 }
