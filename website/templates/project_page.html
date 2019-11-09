@@ -15,18 +15,22 @@
   <h2>Category</h2>
   <p>{{ data.category }}</p>
 </div>
+
 <br>
+
 <div class="content">
   <h2>Product: {{ data.product_name }}</h2>
   <p>Product Price: <strong>${{ data.product_price }}</strong></p>
   <h2>Description of Product:</h2>
   <p>{{ data.product_desc }}</p>
   <h2>Amount funded</h2>
-  {% if data.funded is defined %}
-  <p>{{ data.funded }}</p>
-  {% else %}
-  <p>You have not funded this yet.</p>
-  {% endif %}
+  <strong><p>${{ data.funded }}</p></strong>
+</div>
+
+{% if session.username %}
+<div class="content">
+  <h2>I have funded...</h2>
+  <strong><p>${{ data.user_funded }}</p></strong>
 </div>
 
 <div class="content">
@@ -51,4 +55,5 @@
       </button>
   </form>
 </div>
+{% endif %}
 {% endblock %}

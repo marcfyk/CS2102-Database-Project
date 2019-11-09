@@ -28,7 +28,7 @@
           <td>{{ d[3] }}</td>
           <td>{{ d[4] }}</td>
           <td>{{ d[5] }}</td>
-          <td>{{ d[6] }}</td>
+          <td>{{ '%0.2f' | format(d[6] | float) }}</td>
           <td>
             <form action="/get_project" name="get-project-form-{{ d[0] }}" method="POST" class="form">
               <input hidden value="{{ d[1] }}" name="project-name">
