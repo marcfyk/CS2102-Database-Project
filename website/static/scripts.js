@@ -41,7 +41,7 @@ function addProjectTableRowListeners() {
           type: "POST",
           contentType: "application/json",
           dataType: "json",
-          data: JSON.stringify(data)
+          data: JSON.stringify(data),
         })
       }
     }

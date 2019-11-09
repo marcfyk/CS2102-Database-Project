@@ -125,8 +125,13 @@ def new_project():
         else:
             now = datetime.date.today()
             data["creation_date"] = str(now)
-            query = "INSERT INTO Project(name, expiration_date, goal) VALUES ('{}', '{}', '{}')" \
+            query = "SELECT COUNT(*) FROM Project"
+            num = db.session.execute(query).fetchone()
+            project_id = int(num[0])
+            data["project_id"] = project_id + 1
+            query = "INSERT INTO Project(projectId, name, expiration_date, goal) VALUES ({}, '{}', '{}', '{}')" \
                 .format(
+                    data["project_id"],
                     data["project_name"],
                     data["expiration_date"],
                     data["goal"]
@@ -141,25 +146,20 @@ def new_project():
 def get_project():
     if request.method == "POST":
         name = request.get_json()["name"]
+
         query = "SELECT * FROM Project WHERE name='{}'".format(name)
         ret = db.session.execute(query).fetchone()
         query = "SELECT * FROM Product WHERE projectId={}".format(ret[0])
         ret2 = db.session.execute(query).fetchone()
 
-        for i in ret:
-            print(i)
-        for i in ret2:
-            print(i)
-
         data = {
-            "project_name": ret[1],
-            "creation_date": ret[2],
-            "expiration_date": ret[3],
-            "product_name": ret2[0],
-            "product_price": ret2[3],
-            "product_desc": ret2[2]
+            "project_name":    str(ret[1]),
+            "creation_date":   str(ret[2]),
+            "expiration_date": str(ret[3]),
+            "product_name":    str(ret2[0]),
+            "product_price":   str(ret2[3]),
+            "product_desc":    str(ret2[2])
         }
-        print(data)
 
         return redirect(url_for("render_project_page", data=data))
     return render_template("projects.html")
