@@ -136,7 +136,22 @@ def new_project():
                     data["expiration_date"],
                     data["goal"]
                 )
+            query2 = "INSERT INTO Product(productId, projectId, productDescription, productPrice) VALUES('{}', {}, '{}', {})" \
+                .format(
+                    data["product_name"],
+                    data["project_id"],
+                    data["product_desc"],
+                    data["product_price"]
+                )
+            query3 = "INSERT INTO Owns(username, projectId) VALUES ('{}', {})" \
+                .format(
+                    session["username"],
+                    data["project_id"]
+                )
+            
             db.session.execute(query)
+            db.session.execute(query2)
+            db.session.execute(query3)
             db.session.commit()
             return redirect(url_for("render_project_page", data=data))
     else:
@@ -145,9 +160,10 @@ def new_project():
 @app.route("/get_project", methods=["GET", "POST"])
 def get_project():
     if request.method == "POST":
-        name = request.get_json()["name"]
+        form = request.form
+        pname = form["project-name"]
 
-        query = "SELECT * FROM Project WHERE name='{}'".format(name)
+        query = "SELECT * FROM Project WHERE name='{}'".format(pname)
         ret = db.session.execute(query).fetchone()
         query = "SELECT * FROM Product WHERE projectId={}".format(ret[0])
         ret2 = db.session.execute(query).fetchone()

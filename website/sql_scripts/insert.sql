@@ -88,10 +88,8 @@ CREATE TABLE Transaction (
 
 CREATE TABLE Owns (
     username     varchar(100) REFERENCES Account(username),
-    name         varchar(100),
     projectID    integer REFERENCES Project(projectID) ON DELETE CASCADE,
-    UNIQUE (username, name),
-    PRIMARY KEY (username, name, projectID)
+    PRIMARY KEY (username, projectID)
 );
 
 CREATE TABLE Likes (
@@ -251,15 +249,15 @@ INSERT INTO Product(productId, projectId, productDescription, productPrice)
 INSERT INTO Product(productId, projectId, productDescription, productPrice)
     VALUES('Lots of Printer Paper', 9, 'An amazing self-cleaning water bottle!!!', 100);
 
-INSERT INTO Owns(username, name, projectId) VALUES('hydrohomie', '', 1);
-INSERT INTO Owns(username, name, projectId) VALUES('obama_b', '', 2);
-INSERT INTO Owns(username, name, projectId) VALUES('table_legs', '', 3);
-INSERT INTO Owns(username, name, projectId) VALUES('soc_printer', '', 4);
-INSERT INTO Owns(username, name, projectId) VALUES('whiteboard_marker', '', 5);
-INSERT INTO Owns(username, name, projectId) VALUES('1234', '', 6);
-INSERT INTO Owns(username, name, projectId) VALUES('water_bottle', '', 7);
-INSERT INTO Owns(username, name, projectId) VALUES('sony_is', '', 8);
-INSERT INTO Owns(username, name, projectId) VALUES('john_connor', '', 9);
+INSERT INTO Owns(username, projectId) VALUES('hydrohomie', 1);
+INSERT INTO Owns(username, projectId) VALUES('obama_b',  2);
+INSERT INTO Owns(username, projectId) VALUES('table_legs',  3);
+INSERT INTO Owns(username, projectId) VALUES('soc_printer',  4);
+INSERT INTO Owns(username, projectId) VALUES('whiteboard_marker',  5);
+INSERT INTO Owns(username, projectId) VALUES('1234',  6);
+INSERT INTO Owns(username, projectId) VALUES('water_bottle',  7);
+INSERT INTO Owns(username, projectId) VALUES('sony_is',  8);
+INSERT INTO Owns(username, projectId) VALUES('john_connor',  9);
 
 INSERT INTO Transaction(username, projectId, productId, amount)
     VALUES('hydrohomie', 5, 'Japanese Notebook', 995);
